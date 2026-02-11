@@ -167,6 +167,60 @@ venv/bin/python scripts/utils/kafka_consume_one.py alerts
 # /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic alerts --from-beginning --max-messages 10 --timeout-ms 15000
 ```
 
+---
+
+### R5c. Persistencia MongoDB (opcional)
+
+**Resultado:** Datos del pipeline escritos en MongoDB para consultas de baja latencia. Tres colecciones: `route_delay_aggregates` (agregados de retrasos), `vehicle_status` (estado de vehículos), `bottlenecks` (cuellos de botella).
+
+| Recurso | Ubicación |
+|--------|-----------|
+| Agregados de retrasos | MongoDB: `transport_db.route_delay_aggregates` |
+| Estado de vehículos | MongoDB: `transport_db.vehicle_status` |
+| Bottlenecks | MongoDB: `transport_db.bottlenecks` |
+
+**Requisitos:** MongoDB ejecutándose en `127.0.0.1:27017` y `pymongo` instalado en el venv.
+
+**Cómo reproducir:**
+
+1. **Instalar pymongo** (si no está):
+   ```bash
+   source venv/bin/activate
+   pip install pymongo
+   ```
+
+2. **Consumir alerts → MongoDB** (en una terminal, con `delay_analysis.py` escribiendo en `alerts`):
+   ```bash
+   python storage/mongodb/kafka_to_mongodb_alerts.py
+   ```
+
+3. **Consumir filtered-data → MongoDB** (opcional, en otra terminal):
+   ```bash
+   python storage/mongodb/kafka_to_mongodb_vehicle_status.py
+   ```
+
+4. **Importar bottlenecks desde HDFS** (una vez, tras ejecutar análisis de grafos):
+   ```bash
+   spark-submit --master "local[*]" --conf spark.driver.host=127.0.0.1 storage/mongodb/import_bottlenecks.py
+   ```
+
+**Comprobar:**
+```bash
+# Conectar a MongoDB
+mongosh "mongodb://127.0.0.1:27017/transport_db"
+
+# Consultar agregados
+db.route_delay_aggregates.find().sort({ window_start: -1 }).limit(5)
+
+# Consultar vehículos
+db.vehicle_status.find({ vehicle_id: "V001" }).sort({ timestamp: -1 }).limit(1)
+
+# Consultar bottlenecks
+db.bottlenecks.find().sort({ degree: -1 })
+```
+
+Ver más consultas y detalles en: **storage/mongodb/README.md**.
+
 **Formato de los mensajes en el topic `alerts`:** cada mensaje es un JSON con una fila de agregados por ventana de 15 minutos y ruta. Campos:
 
 | Campo | Tipo | Significado |
@@ -199,6 +253,7 @@ Interpretación: en la ventana 00:00–00:15, ruta R004, 22 registros; 17 con ve
 | Enriquecimiento | Kafka filtered-data + HDFS master_* | HDFS processed/enriched | `processing/spark/sql/data_enrichment.py` |
 | Análisis de grafos | Grafo en memoria (almacenes/rutas) | HDFS network_pagerank, _degrees, _bottlenecks | `processing/spark/graphframes/network_analysis.py` |
 | Análisis de retrasos | Kafka filtered-data | HDFS delay_aggregates + Kafka alerts | `processing/spark/streaming/delay_analysis.py` |
+| Persistencia MongoDB | Kafka alerts + filtered-data + HDFS bottlenecks | MongoDB: route_delay_aggregates, vehicle_status, bottlenecks | `storage/mongodb/kafka_to_mongodb_*.py`, `import_bottlenecks.py` |
 
 Orden recomendado de ejecución y más detalle: **docs/guides/RUN_PIPELINE.md**.  
 Solución de problemas (HDFS, Kafka, Spark): **docs/guides/TROUBLESHOOTING.md** y **docs/guides/CURRENT_STATUS.md**.

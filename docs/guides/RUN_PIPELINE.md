@@ -116,6 +116,36 @@ spark-submit --master "local[*]" \
 
 Salidas: `hdfs://.../user/hive/warehouse/delay_aggregates/` (Parquet por route_id), topic Kafka `alerts`, y consola.
 
+### 5.5 Persistencia MongoDB (opcional)
+
+**Requisitos:** MongoDB ejecutándose (`sudo systemctl start mongodb` o `docker start mongodb`) y `pymongo` instalado (`pip install pymongo` en el venv).
+
+**Consumir alerts → MongoDB** (con `delay_analysis.py` escribiendo en `alerts`):
+```bash
+source venv/bin/activate
+python storage/mongodb/kafka_to_mongodb_alerts.py
+```
+
+**Consumir filtered-data → MongoDB** (opcional, mantiene estado de vehículos):
+```bash
+python storage/mongodb/kafka_to_mongodb_vehicle_status.py
+```
+
+**Importar bottlenecks desde HDFS** (tras ejecutar análisis de grafos):
+```bash
+spark-submit --master "local[*]" --conf spark.driver.host=127.0.0.1 storage/mongodb/import_bottlenecks.py
+```
+
+**Consultar MongoDB:**
+```bash
+mongosh "mongodb://127.0.0.1:27017/transport_db"
+# db.route_delay_aggregates.find().limit(5)
+# db.vehicle_status.find({ vehicle_id: "V001" }).sort({ timestamp: -1 }).limit(1)
+# db.bottlenecks.find()
+```
+
+Ver más detalles y consultas: **storage/mongodb/README.md**.
+
 ## 6. Comprobar resultados
 
 ```bash
