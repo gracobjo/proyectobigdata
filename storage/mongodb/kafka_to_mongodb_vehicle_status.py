@@ -100,7 +100,7 @@ def main():
         consumer = KafkaConsumer(
             KAFKA_TOPIC,
             bootstrap_servers=KAFKA_BOOTSTRAP,
-            auto_offset_reset='latest',  # Solo nuevos mensajes
+            auto_offset_reset='earliest',  # 'earliest' = procesar también mensajes ya existentes; 'latest' = solo nuevos
             enable_auto_commit=True,
             group_id='mongodb-vehicle-status-consumer',
             value_deserializer=lambda m: m
@@ -138,10 +138,10 @@ def main():
                 #     upsert=True
                 # )
                 
-                if processed_count % 10 == 0:
-                    print(f"✓ Procesados: {processed_count} | Último: {data.get('vehicle_id')} @ {data.get('timestamp')}")
-                
                 processed_count += 1
+                # Mostrar los primeros 5 y luego cada 10
+                if processed_count <= 5 or processed_count % 10 == 0:
+                    print(f"✓ Procesados: {processed_count} | Último: {data.get('vehicle_id')} @ {data.get('timestamp')}")
                 
             except Exception as e:
                 print(f"❌ Error insertando en MongoDB: {e}")

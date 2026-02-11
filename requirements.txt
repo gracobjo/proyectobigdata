@@ -30,3 +30,8 @@ pytest-spark==0.6.0
 # Utilidades adicionales
 requests==2.31.0
 pandas==2.1.4
+
+# Visualización del grafo (Streamlit)
+streamlit>=1.28.0
+pyvis>=0.3.2
+networkx>=3.0

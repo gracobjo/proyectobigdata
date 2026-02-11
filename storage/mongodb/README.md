@@ -5,8 +5,10 @@ Scripts para escribir datos del pipeline en MongoDB (NoSQL) para consultas de ba
 ## Colecciones
 
 - **route_delay_aggregates**: Agregados de retrasos por ventana y ruta (desde topic `alerts`)
-- **vehicle_status**: Último estado conocido de cada vehículo (desde topic `filtered-data`)
-- **bottlenecks**: Cuellos de botella detectados por análisis de grafos (desde HDFS)
+- **vehicle_status**: Eventos o último estado de vehículos (desde topic `filtered-data`); puede ser histórico completo
+- **bottlenecks**: Cuellos de botella detectados por análisis de grafos (desde HDFS, importados con `import_bottlenecks.py`)
+
+**Verificación y significado de cada resultado:** Ejecutar `python storage/mongodb/verify_data.py`. Documentación detallada de la salida (qué es cada número, últimos 5, promedios, “vehículos en retraso”, etc.): **docs/guides/VERIFICACION_MONGODB_CARACTERISTICAS.md**.
 
 ## Requisitos
 
@@ -82,6 +84,8 @@ python storage/mongodb/kafka_to_mongodb_vehicle_status.py
 - Opcionalmente enriquece con datos maestros si existen en MongoDB
 
 **Nota:** Por defecto inserta todos los mensajes (histórico completo). Para mantener solo el último estado, descomenta las líneas de `update_one` en el script.
+
+**Si no muestra datos:** El consumidor usa `auto_offset_reset='earliest'` para leer también los mensajes que ya estaban en `filtered-data`. Si usara `latest`, solo vería mensajes nuevos desde que se conecta; si en ese momento no hay tráfico nuevo, la consola quedaría en silencio. Para generar más tráfico: `python scripts/utils/generate_sample_data.py 100`.
 
 ---
 

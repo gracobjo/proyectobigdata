@@ -54,8 +54,27 @@ bash scripts/run/04_mongodb_consumer.sh
 ```bash
 bash scripts/run/05_verify_mongodb.sh
 ```
-**Qué hace:** Muestra estadísticas y datos de las colecciones MongoDB.
-**Cuándo ejecutar:** Cualquier momento para verificar el progreso. Puede ejecutarse múltiples veces.
+
+---
+
+### Siguientes pasos (opcionales)
+
+**Terminal 6: Enriquecimiento** (filtered-data + tablas maestras -> HDFS):
+```bash
+bash scripts/run/06_data_enrichment.sh
+```
+Requisitos: tablas maestras en HDFS (`create_tables_spark.py`).
+
+**Análisis de grafos** (batch, una vez):
+```bash
+bash scripts/run/07_network_analysis.sh
+```
+Requisitos: `pip install graphframes-py setuptools`.
+
+**Importar bottlenecks a MongoDB** (después de 07):
+```bash
+bash scripts/run/08_import_bottlenecks.sh
+```
 
 ---
 

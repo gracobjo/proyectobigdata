@@ -8,7 +8,7 @@ Esta sección describe los **resultados concretos** del pipeline en modo standal
 
 - **Servicios activos:** HDFS (NameNode + al menos 1 DataNode), Kafka (KRaft), en `localhost` / `127.0.0.1`.
 - **Directorios HDFS:** Ejecutar `bash scripts/setup/setup_hdfs_dirs.sh`.
-- **Entorno Python:** `bash scripts/setup/setup_venv.sh` y, para análisis de grafos, `pip install graphframes-py setuptools` en el venv.
+- **Entorno Python:** `bash scripts/setup/setup_venv.sh` y `pip install -r requirements.txt` en el venv (incluye graphframes-py, setuptools y, para visualización del grafo, streamlit, pyvis, networkx).
 
 Verificación rápida:
 ```bash
@@ -221,6 +221,29 @@ db.bottlenecks.find().sort({ degree: -1 })
 
 Ver más consultas y detalles en: **storage/mongodb/README.md**.
 
+---
+
+### R5d. Visualización del grafo (opcional)
+
+**Resultado:** Aplicación web interactiva (Streamlit) que muestra el grafo de la red de transporte (almacenes y rutas) y resalta los cuellos de botella desde MongoDB.
+
+| Recurso | Descripción |
+|--------|-------------|
+| App web | Streamlit en `http://localhost:8501` |
+| Grafo | Mismo modelo que `network_analysis.py` (5 nodos, 7 aristas), dibujado con Pyvis |
+| Bottlenecks | Si MongoDB tiene `transport_db.bottlenecks`, nodos con grado ≥ 3 en rojo |
+
+**Requisitos:** Dependencias en `requirements.txt` (streamlit, pyvis, networkx). MongoDB opcional.
+
+**Cómo reproducir:**
+
+```bash
+source venv/bin/activate
+streamlit run viz/app_grafo.py
+```
+
+**Documentación:** **docs/guides/VISUALIZACION_GRAFO.md**, **viz/README.md**.
+
 **Formato de los mensajes en el topic `alerts`:** cada mensaje es un JSON con una fila de agregados por ventana de 15 minutos y ruta. Campos:
 
 | Campo | Tipo | Significado |
@@ -254,6 +277,7 @@ Interpretación: en la ventana 00:00–00:15, ruta R004, 22 registros; 17 con ve
 | Análisis de grafos | Grafo en memoria (almacenes/rutas) | HDFS network_pagerank, _degrees, _bottlenecks | `processing/spark/graphframes/network_analysis.py` |
 | Análisis de retrasos | Kafka filtered-data | HDFS delay_aggregates + Kafka alerts | `processing/spark/streaming/delay_analysis.py` |
 | Persistencia MongoDB | Kafka alerts + filtered-data + HDFS bottlenecks | MongoDB: route_delay_aggregates, vehicle_status, bottlenecks | `storage/mongodb/kafka_to_mongodb_*.py`, `import_bottlenecks.py` |
+| Visualización del grafo | Grafo (viz/graph_data) + MongoDB bottlenecks | App Streamlit: grafo interactivo + nodos bottleneck resaltados | `viz/app_grafo.py` → [VISUALIZACION_GRAFO.md](guides/VISUALIZACION_GRAFO.md) |
 
 Orden recomendado de ejecución y más detalle: **docs/guides/RUN_PIPELINE.md**.  
 Solución de problemas (HDFS, Kafka, Spark): **docs/guides/TROUBLESHOOTING.md** y **docs/guides/CURRENT_STATUS.md**.
@@ -423,12 +447,10 @@ Solución de problemas (HDFS, Kafka, Spark): **docs/guides/TROUBLESHOOTING.md** 
 
 #### 6.2 Guías de Usuario
 - **docs/architecture/CLUSTER_SETUP.md**: Configuración del cluster distribuido
-- **docs/guides/INSTALLATION.md**: Instalación paso a paso de todos los componentes
+- **docs/guides/INSTALLATION.md**: Instalación paso a paso de todos los componentes (incl. venv y requirements.txt)
 - **docs/guides/CONFIGURATION.md**: Configuración detallada de cada servicio
-- **docs/guides/USAGE.md**: 
-  - Inicio del sistema
-  - Ejecución de cada fase
-  - Monitoreo y troubleshooting
+- **docs/guides/USAGE.md**: Inicio del sistema, ejecución de cada fase, monitoreo y troubleshooting
+- **docs/guides/VISUALIZACION_GRAFO.md**: App Streamlit para visualizar el grafo de red y bottlenecks (opcional)
 
 #### 6.3 Documentación de API
 - **docs/api/API.md**: 

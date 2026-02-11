@@ -8,8 +8,9 @@ Documentación detallada de qué hace cada script ejecutado en los terminales de
 
 1. [Scripts de Preparación](#scripts-de-preparación)
 2. [Scripts del Pipeline Principal](#scripts-del-pipeline-principal)
-3. [Scripts de Persistencia](#scripts-de-persistencia)
-4. [Scripts de Verificación](#scripts-de-verificación)
+3. [Terminal 6: Enriquecimiento](#terminal-6-enriquecimiento-de-datos-06_data_enrichmentsh)
+4. [Scripts de Persistencia](#scripts-de-persistencia)
+5. [Scripts de Verificación](#scripts-de-verificación)
 
 ---
 
@@ -349,6 +350,8 @@ bash scripts/run/04_mongodb_consumer.sh
 bash scripts/run/05_verify_mongodb.sh
 ```
 
+**Características de la salida (qué significa cada número, últimos 5, promedios, vehículos en retraso, bottlenecks):** Ver **docs/guides/VERIFICACION_MONGODB_CARACTERISTICAS.md**.
+
 **Ejemplo de salida:**
 ```
 === Verificación de datos en MongoDB ===
@@ -414,6 +417,20 @@ Promedio de retraso por ruta:
 
 ---
 
+### Terminal 6: Enriquecimiento de datos (`06_data_enrichment.sh`)
+
+**Script Python:** `processing/spark/sql/data_enrichment.py`
+
+**Qué hace:** Lee el stream de `filtered-data` (Kafka), lo cruza con las tablas maestras `master_routes` y `master_vehicles` (HDFS), añade campos derivados (`is_delayed`, `enriched_at`) y escribe el resultado en HDFS en formato Parquet, particionado por `route_id` y `partition_date`.
+
+**Para qué sirve:** Tener eventos de transporte enriquecidos con nombre de ruta, origen/destino, tipo de vehículo y empresa, listos para análisis o reporting en HDFS.
+
+**Salida en HDFS:** `hdfs://localhost:9000/user/hadoop/processed/enriched/` con carpetas `route_id=R001`, `route_id=R002`, etc., y dentro `partition_date=YYYY-MM-DD` con ficheros `.parquet`.
+
+**Documentación detallada** (ejemplos de salida, explicación de cada elemento, comandos de verificación): **docs/guides/ENRIQUECIMIENTO_DATOS.md**.
+
+---
+
 ## 📊 Resumen por Terminal
 
 | Terminal | Script | Qué Hace | Entrada | Salida |
@@ -424,6 +441,7 @@ Promedio de retraso por ruta:
 | **3** | `03_delay_analysis.sh` | Analiza retrasos | `filtered-data` | `alerts` (Kafka) + HDFS |
 | **4** | `04_mongodb_consumer.sh` | Persiste en MongoDB | `alerts` | MongoDB |
 | **5** | `05_verify_mongodb.sh` | Verifica datos | MongoDB | Estadísticas (consola) |
+| **6** | `06_data_enrichment.sh` | Enriquecimiento (stream + maestros) | `filtered-data` + HDFS master_* | HDFS `processed/enriched` |
 
 ---
 

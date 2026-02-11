@@ -142,6 +142,41 @@ hdfs dfs -mkdir -p /user/hadoop/raw
 hdfs dfs -mkdir -p /user/hadoop/processed
 ```
 
+## Dependencias Python del proyecto
+
+El proyecto usa un **entorno virtual** y un `requirements.txt` para scripts de procesamiento (Spark, Kafka, MongoDB) y para la visualización del grafo.
+
+1. Crear y activar el entorno virtual:
+
+```bash
+cd /home/hadoop/Documentos/ProyectoBigData
+bash scripts/setup/setup_venv.sh
+source venv/bin/activate
+```
+
+2. Instalar dependencias Python:
+
+```bash
+pip install -r requirements.txt
+```
+
+Incluye, entre otras: `pyspark`, `kafka-python`, `graphframes-py`, `pymongo`, `pandas`. Para la **visualización del grafo** (Streamlit) también están incluidas: `streamlit`, `pyvis`, `networkx`.
+
+En sistemas con Python gestionado por el SO (PEP 668), usar siempre el venv; no instalar paquetes con `pip` a nivel sistema.
+
+### Visualización del grafo (opcional)
+
+Para ejecutar la app **Streamlit** que visualiza el grafo de la red de transporte y los cuellos de botella desde MongoDB:
+
+```bash
+source venv/bin/activate
+streamlit run viz/app_grafo.py
+```
+
+Requisitos: las dependencias anteriores (streamlit, pyvis, networkx) ya están en `requirements.txt`. MongoDB es opcional (si está activo y con datos en `transport_db.bottlenecks`, se resaltan los nodos bottleneck en rojo).
+
+Guía detallada: [Visualización del grafo](VISUALIZACION_GRAFO.md).
+
 ## Verificación de Instalación
 
 Ejecutar los scripts de verificación:
@@ -155,3 +190,4 @@ Ejecutar los scripts de verificación:
 Una vez completada la instalación, consultar:
 - [Guía de Configuración](CONFIGURATION.md)
 - [Guía de Uso](USAGE.md)
+- [Visualización del grafo](VISUALIZACION_GRAFO.md) (app Streamlit opcional)

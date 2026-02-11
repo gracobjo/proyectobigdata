@@ -48,17 +48,20 @@ def main():
         df = spark.read.parquet(HDFS_BOTTLENECKS_PATH)
         print(f"✓ Leídos {df.count()} registros desde HDFS\n")
         
-        # Convertir a lista de diccionarios
+        # Convertir a lista de diccionarios (Row de PySpark: usar row['col'], no row.get())
+        # network_bottlenecks viene de graph.degrees: columnas "id" y "degree"
         rows = df.collect()
-        
-        # Insertar en MongoDB
+        cols = df.columns
+
         from datetime import datetime
         documents = []
         for row in rows:
+            node_id = row['id'] if 'id' in cols else ''
+            degree = int(row['degree']) if 'degree' in cols else 0
             doc = {
-                'node_id': row['id'] if 'id' in row else row.get('node_id', ''),
-                'node_name': row.get('name', ''),
-                'degree': int(row.get('degree', 0)),
+                'node_id': node_id,
+                'node_name': node_id,  # degrees no tiene 'name'; usar id como nombre
+                'degree': degree,
                 'detected_at': datetime.now()
             }
             documents.append(doc)
