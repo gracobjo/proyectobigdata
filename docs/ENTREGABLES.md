@@ -289,13 +289,12 @@ Solución de problemas (HDFS, Kafka, Spark): **docs/guides/TROUBLESHOOTING.md** 
 ### 1. ARQUITECTURA DE INGESTA (NiFi + Kafka)
 
 #### 1.1 Configuración de Apache NiFi
-- **Archivo**: `ingestion/nifi/README.md`
-- **Descripción**: Documentación de flujos de ingesta
+- **Archivos**: `ingestion/nifi/README.md`, **docs/guides/NIFI_FLUJOS.md**
+- **Descripción**: Documentación de flujos de ingesta (procesadores, propiedades, conexiones)
 - **Contenido**:
-  - Configuración para consumir APIs públicas (OpenWeather, FlightRadar24)
-  - Procesamiento de logs GPS simulados
-  - Manejo de back-pressure y errores
-  - Almacenamiento raw en HDFS
+  - Guía paso a paso: qué procesadores y grupos añadir, propiedades y valores, conexiones (NIFI_FLUJOS.md)
+  - Configuración para consumir APIs públicas (OpenWeather, FlightRadar24) y logs GPS
+  - Manejo de back-pressure y errores; almacenamiento raw en HDFS
 
 #### 1.2 Configuración de Apache Kafka
 - **Archivo**: `config/kafka/server.properties`
@@ -451,6 +450,7 @@ Solución de problemas (HDFS, Kafka, Spark): **docs/guides/TROUBLESHOOTING.md** 
 - **docs/guides/CONFIGURATION.md**: Configuración detallada de cada servicio
 - **docs/guides/USAGE.md**: Inicio del sistema, ejecución de cada fase, monitoreo y troubleshooting
 - **docs/guides/VISUALIZACION_GRAFO.md**: App Streamlit para visualizar el grafo de red y bottlenecks (opcional)
+- **docs/guides/NIFI_FLUJOS.md**: NiFi – procesadores, propiedades y conexiones por flujo (OpenWeather, FlightRadar24, logs GPS)
 
 #### 6.3 Documentación de API
 - **docs/api/API.md**: 

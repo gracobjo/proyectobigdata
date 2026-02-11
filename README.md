@@ -145,6 +145,10 @@ Ver [docs/guides/USAGE.md](docs/guides/USAGE.md) para guías de uso.
 - [Arquitectura del Sistema](docs/architecture/ARCHITECTURE.md)
 - [Configuración del Cluster](docs/architecture/CLUSTER_SETUP.md)
 - [Guía de Configuración](docs/guides/CONFIGURATION.md)
+- [Instalación](docs/guides/INSTALLATION.md) · [Uso](docs/guides/USAGE.md)
+- [Airflow: instalación, uso y gráfico en la UI](docs/guides/AIRFLOW.md)
+- [NiFi: procesadores, propiedades y conexiones](docs/guides/NIFI_FLUJOS.md)
+- [Visualización del grafo (Streamlit)](docs/guides/VISUALIZACION_GRAFO.md)
 - [API Reference](docs/api/API.md)
 
 ## Contribución

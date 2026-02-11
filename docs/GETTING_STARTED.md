@@ -85,7 +85,7 @@ bin/nifi.sh start
 
 # Acceder a la interfaz web
 # http://nodo1:8443/nifi
-# Importar template desde ingestion/nifi/ si existe
+# Si existe template: importar desde ingestion/nifi/. Si no: montar flujos según docs/guides/NIFI_FLUJOS.md
 ```
 
 ---

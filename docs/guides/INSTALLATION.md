@@ -64,21 +64,27 @@ export PATH=$PATH:$SPARK_HOME/bin
 
 ### 5. Apache Airflow 2.10.x
 
+**Versión correspondiente al proyecto:** `apache-airflow==2.10.0` y `apache-airflow-providers-apache-spark==4.9.0` (recomendado usar el archivo de constraints oficial para dependencias compatibles).
+
+**Opción A – Script del proyecto (recomendado, con constraints):**
+
 ```bash
-# Instalar Airflow con pip
-pip install apache-airflow==2.10.0
-
-# Inicializar base de datos
-airflow db init
-
-# Crear usuario admin
-airflow users create \
-    --username admin \
-    --firstname Admin \
-    --lastname User \
-    --role Admin \
-    --email admin@example.com
+cd /home/hadoop/Documentos/ProyectoBigData
+source venv/bin/activate
+bash scripts/setup/install_airflow.sh
 ```
+
+**Opción B – Instalación manual con constraints (Python 3.10 o 3.11):**
+
+```bash
+# Sustituir 3.11 por 3.10 si usas Python 3.10
+pip install "apache-airflow==2.10.0" "apache-airflow-providers-apache-spark==4.9.0" \
+  --constraint "https://raw.githubusercontent.com/apache/airflow/constraints-2.10.0/constraints-3.11.txt"
+```
+
+**Opción C – Solo pip (sin constraints):** `pip install -r requirements.txt` (incluye `apache-airflow==2.10.0` y el provider Spark; puede haber conflictos de dependencias).
+
+**Tras la instalación:** inicializar BD (`airflow db init`), crear usuario admin (`airflow users create ...`), opcionalmente poner `load_examples = False` en `~/airflow/airflow.cfg`, copiar DAGs a `~/airflow/dags/` y arrancar scheduler y webserver. **Guía completa (para qué sirve Airflow, pasos detallados y significado del gráfico en la UI):** [AIRFLOW.md](AIRFLOW.md).
 
 ### 6. MongoDB
 
@@ -190,4 +196,6 @@ Ejecutar los scripts de verificación:
 Una vez completada la instalación, consultar:
 - [Guía de Configuración](CONFIGURATION.md)
 - [Guía de Uso](USAGE.md)
+- [Airflow: instalación completa y uso](AIRFLOW.md)
+- [NiFi: procesadores, propiedades y conexiones](NIFI_FLUJOS.md)
 - [Visualización del grafo](VISUALIZACION_GRAFO.md) (app Streamlit opcional)

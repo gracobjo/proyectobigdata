@@ -56,15 +56,18 @@ airflow webserver --port 8080 &
 airflow scheduler &
 ```
 
-Acceder a la interfaz web: http://localhost:8080
+Acceder a la interfaz web: http://localhost:8080  
+
+**Instalación paso a paso, para qué sirve Airflow y qué significa el gráfico (círculos) en la UI:** [AIRFLOW.md](AIRFLOW.md).
 
 ## Ejecución de Fases
 
 ### Fase I: Ingesta y Selección
 
-1. **Importar flujo de NiFi**:
-   - Acceder a NiFi UI
-   - Importar template desde `ingestion/nifi/transport_monitoring_template.xml`
+1. **Configurar flujo de NiFi**:
+   - Acceder a NiFi UI (http://localhost:8443/nifi)
+   - Si existe template: importar desde `ingestion/nifi/transport_monitoring_template.xml`
+   - Si no: montar flujos a mano según **[NIFI_FLUJOS.md](NIFI_FLUJOS.md)** (procesadores, propiedades, conexiones)
 
 2. **Crear topics de Kafka**:
 ```bash
@@ -82,7 +85,7 @@ bin/kafka-topics.sh --create \
 ```
 
 3. **Iniciar flujo de NiFi**:
-   - Activar todos los procesadores en el template
+   - Activar todos los procesadores (template o flujos montados según NIFI_FLUJOS.md)
 
 ### Fase II: Preprocesamiento y Transformación
 
