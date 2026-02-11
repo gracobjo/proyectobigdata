@@ -1,0 +1,148 @@
+openapi: 3.0.3
+info:
+  title: Transport Monitoring API
+  description: API REST para consultar estado de vehículos, agregados de retrasos y cuellos de botella (datos en MongoDB). Documentación para publicación con Swagger UI.
+  version: 1.0.0
+  contact:
+    name: Proyecto Big Data
+
+servers:
+  - url: http://localhost:5000
+    description: Entorno local
+  - url: http://nodo1:5000
+    description: Servidor del cluster
+
+tags:
+  - name: vehicles
+    description: Estado de vehículos (MongoDB vehicle_status)
+  - name: delays
+    description: Agregados de retrasos por ruta y ventana (MongoDB route_delay_aggregates)
+  - name: bottlenecks
+    description: Nodos cuello de botella (MongoDB bottlenecks)
+  - name: health
+    description: Salud del servicio
+
+paths:
+  /health:
+    get:
+      tags: [health]
+      summary: Estado del servicio
+      responses:
+        '200':
+          description: Servicio operativo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+                  mongo: { type: string, example: connected }
+
+  /vehicles:
+    get:
+      tags: [vehicles]
+      summary: Listar último estado de vehículos
+      parameters:
+        - name: route_id
+          in: query
+          schema: { type: string, example: R001 }
+          description: Filtrar por ruta
+        - name: limit
+          in: query
+          schema: { type: integer, default: 20 }
+      responses:
+        '200':
+          description: Lista de estados de vehículos
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/VehicleStatus' }
+
+  /vehicles/{vehicle_id}:
+    get:
+      tags: [vehicles]
+      summary: Último estado de un vehículo
+      parameters:
+        - name: vehicle_id
+          in: path
+          required: true
+          schema: { type: string, example: V001 }
+      responses:
+        '200':
+          description: Estado del vehículo
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VehicleStatus' }
+        '404':
+          description: Vehículo no encontrado
+
+  /delays:
+    get:
+      tags: [delays]
+      summary: Agregados de retrasos por ventana
+      parameters:
+        - name: route_id
+          in: query
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+      responses:
+        '200':
+          description: Lista de agregados
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/DelayAggregate' }
+
+  /bottlenecks:
+    get:
+      tags: [bottlenecks]
+      summary: Nodos cuello de botella (por grado)
+      responses:
+        '200':
+          description: Lista de bottlenecks
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Bottleneck' }
+
+components:
+  schemas:
+    VehicleStatus:
+      type: object
+      properties:
+        vehicle_id: { type: string }
+        route_id: { type: string }
+        timestamp: { type: string, format: date-time }
+        latitude: { type: number }
+        longitude: { type: number }
+        speed: { type: number }
+        status: { type: string }
+      description: Último estado conocido del vehículo (MongoDB vehicle_status)
+
+    DelayAggregate:
+      type: object
+      properties:
+        window_start: { type: string, format: date-time }
+        window_end: { type: string, format: date-time }
+        route_id: { type: string }
+        total_vehicles: { type: integer }
+        avg_speed: { type: number }
+        delayed_count: { type: integer }
+        delay_percentage: { type: number }
+        max_speed: { type: number }
+        min_speed: { type: number }
+      description: Agregado de retrasos por ventana (MongoDB route_delay_aggregates)
+
+    Bottleneck:
+      type: object
+      properties:
+        node_id: { type: string }
+        node_name: { type: string }
+        degree: { type: integer }
+        detected_at: { type: string, format: date-time }
+      description: Nodo con alto grado en la red (MongoDB bottlenecks)

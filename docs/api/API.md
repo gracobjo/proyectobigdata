@@ -1,5 +1,7 @@
 # API Reference
 
+Este documento describe **consultas directas** (Hive, MongoDB, Kafka) y los esquemas de datos. Para exponer estos datos como **API REST** documentada con **Swagger/OpenAPI** y publicarla, ver **[SWAGGER_API.md](SWAGGER_API.md)** y la especificación **[openapi.yaml](openapi.yaml)**.
+
 ## Endpoints de Consulta
 
 ### Hive Queries

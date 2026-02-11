@@ -35,3 +35,7 @@ pandas==2.1.4
 streamlit>=1.28.0
 pyvis>=0.3.2
 networkx>=3.0
+
+# API REST (Swagger / OpenAPI)
+fastapi>=0.100.0
+uvicorn[standard]>=0.22.0

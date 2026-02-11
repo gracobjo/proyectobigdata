@@ -453,11 +453,9 @@ Solución de problemas (HDFS, Kafka, Spark): **docs/guides/TROUBLESHOOTING.md** 
 - **docs/guides/NIFI_FLUJOS.md**: NiFi – procesadores, propiedades y conexiones por flujo (OpenWeather, FlightRadar24, logs GPS)
 
 #### 6.3 Documentación de API
-- **docs/api/API.md**: 
-  - Ejemplos de consultas Hive
-  - Ejemplos de consultas MongoDB
-  - Uso de topics Kafka
-  - Schemas de datos
+- **docs/api/API.md**: Ejemplos de consultas Hive, MongoDB, Kafka y schemas de datos.
+- **docs/api/SWAGGER_API.md**: Guía para documentar y publicar una API REST con Swagger/OpenAPI (FastAPI o Flask+Flasgger, uso de la spec, publicación).
+- **docs/api/openapi.yaml**: Especificación OpenAPI 3.0 de la API de monitorización (vehicles, delays, bottlenecks, health).
 
 #### 6.4 Justificación del Ciclo KDD
 La documentación demuestra cómo el proyecto implementa cada fase:
