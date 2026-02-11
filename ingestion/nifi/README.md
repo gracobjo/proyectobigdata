@@ -1,6 +1,19 @@
 # Configuración de Apache NiFi
 
-Este directorio contiene la documentación de los flujos de ingesta de datos en NiFi para el proyecto. (Si existe un template `transport_monitoring_template.xml`, se puede importar desde NiFi → **Upload Template**.)
+Este directorio contiene la documentación y la **definición de flujo** para importar en NiFi.
+
+## Importar el flujo (NiFi 2.x)
+
+1. En NiFi, arrastra **Process Group** al canvas (o Add → Process Group).
+2. Doble clic en el grupo → en la barra de herramientas, **Upload flow definition** (icono de subir / Browse).
+3. Selecciona el fichero **`transport_monitoring_flow.json`** de este directorio.
+4. Revisa y **habilita** los procesadores que vayas a usar. Ajusta:
+   - **OpenWeather InvokeHTTP**: sustituye `REPLACE_WITH_API_KEY` en Remote URL por tu API key.
+   - **Kafka Brokers**: `localhost:9092` o `nodo1:9092` según tu entorno.
+   - **GetFile**: directorio `Input Directory` (p. ej. `/home/hadoop/data/gps_logs`); créalo si no existe.
+   - **PutHDFS**: configurar un **Controller Service** de Hadoop (core-site.xml, hdfs-site.xml) y asignarlo a PutHDFS si no lo toma por defecto.
+
+Ver **docs/guides/NIFI_FLUJOS.md** para propiedades detalladas y conexiones.
 
 ## Guía detallada: procesadores, propiedades y conexiones
 

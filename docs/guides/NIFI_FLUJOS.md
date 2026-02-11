@@ -1,6 +1,8 @@
 # NiFi: procesadores, propiedades y conexiones
 
-Guía para montar en NiFi los flujos de ingesta del proyecto **sin usar template** (añadiendo procesadores y conexiones a mano). Si en el futuro existe un template `transport_monitoring_template.xml`, se puede importar desde **Upload Template** en NiFi.
+Guía para montar en NiFi los flujos de ingesta del proyecto. Puedes **importar** el flujo desde el JSON o **montarlo a mano** siguiendo esta guía.
+
+**Importar en NiFi 2.x:** En un Process Group → **Upload flow definition** → seleccionar **`ingestion/nifi/transport_monitoring_flow.json`**. Luego revisar propiedades (API key OpenWeather, Kafka Brokers, directorio GetFile, Controller Service HDFS para PutHDFS) y habilitar los procesadores.
 
 **Requisitos previos:** Kafka en marcha con topics `raw-data` y `filtered-data`; HDFS con directorio `/user/hadoop/raw`; NiFi 2.6.x instalado y accesible en http://localhost:8443/nifi (o http://nodo1:8443/nifi).
 
