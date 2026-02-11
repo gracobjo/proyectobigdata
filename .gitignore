@@ -1,0 +1,65 @@
+# Archivos de configuración local
+*.local
+*.env
+
+# Logs
+*.log
+logs/
+*.out
+
+# Checkpoints de Spark
+checkpoints/
+spark-logs/
+
+# Datos temporales
+data/temp/
+data/raw/*.csv
+data/raw/*.json
+data/processed/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Airflow
+airflow.db
+airflow.cfg
+logs/
+
+# HDFS
+hdfs/
+*.tmp
+
+# Kafka
+kafka-logs/
+
+# NiFi
+nifi/conf/flow.xml.gz
+nifi/logs/
+
+# Cassandra
+cassandra/data/
+cassandra/logs/
+cassandra/saved_caches/
+
+# Modelos y backups
+model_backups/
+*.model
+*.pkl
+
+# OS
+.DS_Store
+Thumbs.db

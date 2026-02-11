@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<configuration>
+    <!-- Hive Metastore Configuration -->
+    <property>
+        <name>javax.jdo.option.ConnectionURL</name>
+        <value>jdbc:derby:;databaseName=/tmp/metastore_db;create=true</value>
+        <description>JDBC connect string for a JDBC metastore</description>
+    </property>
+    
+    <property>
+        <name>javax.jdo.option.ConnectionDriverName</name>
+        <value>org.apache.derby.jdbc.EmbeddedDriver</value>
+        <description>Driver class name for a JDBC metastore</description>
+    </property>
+    
+    <!-- Hive Warehouse Directory -->
+    <property>
+        <name>hive.metastore.warehouse.dir</name>
+        <value>hdfs://nodo1:9000/user/hive/warehouse</value>
+        <description>Location of default database for the warehouse</description>
+    </property>
+    
+    <!-- Hive Metastore Service -->
+    <property>
+        <name>hive.metastore.uris</name>
+        <value>thrift://nodo1:9083</value>
+        <description>Thrift URI for the remote metastore</description>
+    </property>
+    
+    <!-- Execution Engine -->
+    <property>
+        <name>hive.execution.engine</name>
+        <value>spark</value>
+        <description>Execution engine for Hive queries</description>
+    </property>
+    
+    <!-- Spark Integration -->
+    <property>
+        <name>spark.master</name>
+        <value>yarn</value>
+    </property>
+    
+    <property>
+        <name>spark.executor.memory</name>
+        <value>2g</value>
+    </property>
+    
+    <!-- HDFS Configuration -->
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://nodo1:9000</value>
+    </property>
+</configuration>

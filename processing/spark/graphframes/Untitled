@@ -1,0 +1,5 @@
+cd /home/hadoop/Documentos/ProyectoBigData
+PYSPARK_PYTHON=./venv/bin/python spark-submit --master "local[*]" \
+  --packages io.graphframes:graphframes-spark3_2.12:0.10.0 \
+  --conf spark.driver.host=127.0.0.1 \
+  processing/spark/graphframes/network_analysis.py
