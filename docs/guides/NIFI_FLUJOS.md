@@ -4,7 +4,11 @@ Guía para montar en NiFi los flujos de ingesta del proyecto. Puedes **importar*
 
 **Importar en NiFi 2.x:** En un Process Group → **Upload flow definition** → seleccionar **`ingestion/nifi/transport_monitoring_flow.json`**. Luego revisar propiedades (API key OpenWeather, Kafka Brokers, directorio GetFile, Controller Service HDFS para PutHDFS) y habilitar los procesadores.
 
+**Integración IoT:** Para usar sensores reales en lugar de simulaciones, ver **docs/guides/IOT_SENSORES.md** y el flujo de ejemplo **`ingestion/nifi/iot_sensors_flow.json`**.
+
 **Requisitos previos:** Kafka en marcha con topics `raw-data` y `filtered-data`; HDFS con directorio `/user/hadoop/raw`; NiFi 2.6.x instalado y accesible en http://localhost:8443/nifi (o http://nodo1:8443/nifi).
+
+**Fuentes de datos:** Ver **docs/guides/FUENTES_DATOS.md** para obtener/generar datasets. Para logs GPS, ejecuta `python3 scripts/utils/generate_gps_log_file.py -n 200` para crear un fichero de ejemplo en `/home/hadoop/data/gps_logs/`.
 
 ---
 

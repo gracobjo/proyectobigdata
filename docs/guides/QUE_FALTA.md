@@ -22,12 +22,13 @@ Para exponer los datos (MongoDB) como API REST y publicar la documentación con 
 
 ## Datos y modelos
 
-| Elemento | Descripción |
-|----------|-------------|
-| **Más fuentes en NiFi** | Integrar más APIs o fuentes además de OpenWeather/FlightRadar24 y logs GPS. |
-| **IA y mejora de rutas** | Cuándo introducir IA y cómo mejorar rutas (con/sin ML): **docs/guides/IA_RUTAS.md**. |
-| **Modelo de ML** | Modelo de predicción de retrasos (entrenado con delay_aggregates); Airflow ya tiene DAG de re-entrenamiento mensual. |
-| **Alertas automáticas** | Reglas (p. ej. delay_percentage > umbral) y notificaciones (email, Slack) desde los agregados en MongoDB o desde la API. |
+| Elemento | Estado | Descripción |
+|----------|--------|-------------|
+| **Más fuentes en NiFi** | Pendiente | Integrar más APIs o fuentes además de OpenWeather/FlightRadar24 y logs GPS. |
+| **IA y mejora de rutas** | ✅ Implementado | Cuándo introducir IA y cómo mejorar rutas (con/sin ML): **docs/guides/IA_RUTAS.md**. |
+| **Modelo de ML** | ✅ Implementado | Modelo de predicción de retrasos (entrenado con delay_aggregates); Airflow tiene DAGs de re-entrenamiento mensual (`monthly_model_retraining`) y semanal (`weekly_delay_model_training`). |
+| **Alertas automáticas** | Pendiente | Reglas (p. ej. delay_percentage > umbral) y notificaciones (email, Slack) desde los agregados en MongoDB o desde la API. |
+| **DAGs adicionales de Airflow** | ✅ Implementado | DAGs de mantenimiento (`system_maintenance`), calidad de datos (`data_quality_check`), generación continua (`simulation_data_stream`) y reportes ejecutivos (`executive_reporting`). Ver **docs/guides/AIRFLOW.md**. |
 
 ## Seguridad y producción
 

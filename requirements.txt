@@ -43,3 +43,9 @@ uvicorn[standard]>=0.22.0
 # IA / recomendación de rutas (Paso 2: entrenar modelo)
 scikit-learn>=1.3.0
 joblib>=1.3.0
+
+# Visualización de grafos en Airflow (opcional, para airflow dags show)
+graphviz>=0.21
+
+# IoT / MQTT (para pruebas de sensores reales)
+paho-mqtt>=1.6.0

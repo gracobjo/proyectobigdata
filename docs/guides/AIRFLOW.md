@@ -73,23 +73,50 @@ cp /home/hadoop/Documentos/ProyectoBigData/orchestration/airflow/dags/* ~/airflo
 
 ### 5. Arrancar webserver y scheduler
 
+**Opción recomendada (script del proyecto):**
+
+```bash
+cd /home/hadoop/Documentos/ProyectoBigData
+bash scripts/utils/start_airflow.sh
+```
+
+**Opción manual:**
+
 ```bash
 cd /home/hadoop/Documentos/ProyectoBigData
 source venv/bin/activate
 export AIRFLOW_HOME=~/airflow
 
-airflow scheduler &
-airflow webserver --port 8080 &
+airflow scheduler > ~/airflow/logs/scheduler.log 2>&1 &
+airflow webserver --port 8080 > ~/airflow/logs/webserver.log 2>&1 &
 ```
+
+**Importante**: El scheduler debe estar corriendo para que los DAGs se registren en la base de datos y puedas ejecutarlos. El script `start_airflow.sh` ejecuta automáticamente `airflow dags reserialize` para forzar el registro. Si inicias el scheduler manualmente, ejecuta `airflow dags reserialize` después de iniciarlo.
 
 Abrir en el navegador: **http://localhost:8080** (o http://nodo1:8080 si accedes por red). Iniciar sesión con el usuario `admin` y la contraseña creada en el paso 2.
 
 ### Detener Airflow
 
+**Opción recomendada (script del proyecto):**
+
+```bash
+bash scripts/utils/stop_airflow.sh
+```
+
+**Opción manual:**
+
 ```bash
 pkill -f "airflow scheduler"
 pkill -f "airflow webserver"
 ```
+
+### Verificar que el scheduler está corriendo
+
+```bash
+ps aux | grep "airflow scheduler"
+```
+
+Si no está corriendo, los DAGs no se registrarán y comandos como `airflow dags trigger` fallarán con `DagNotFound`.
 
 ---
 
@@ -139,10 +166,78 @@ Para ver el **grafo del workflow** (cajas = tareas, flechas = dependencias):
 |-----|-------------|--------------|
 | **transport_monitoring_pipeline** | Orquesta tareas del pipeline de transporte (limpieza, enriquecimiento, análisis de retrasos, etc.). | Diaria (@daily) |
 | **monthly_model_retraining** | Re-entrenamiento o actualización del modelo de grafos (GraphFrames). | Mensual (@monthly) |
+| **weekly_delay_model_training** | Entrenamiento semanal del modelo de predicción de retrasos (IA/ML) usando `route_delay_aggregates`. | Semanal (@weekly) |
+| **system_maintenance** | Limpieza de datos antiguos en HDFS, rotación de logs y optimización de almacenamiento. | Semanal (@weekly) |
+| **data_quality_check** | Verificación diaria de calidad de datos y consistencia entre Kafka, HDFS y MongoDB. | Diaria (@daily) |
+| **simulation_data_stream** | Generación continua de datos GPS simulados para desarrollo/demos. | Cada 15 minutos |
+| **executive_reporting** | Generación y envío de reportes ejecutivos semanales con tendencias y métricas. | Semanal (@weekly) |
 
 Definiciones en: `orchestration/airflow/dags/`.
 
+### Detalles de los DAGs adicionales
+
+#### weekly_delay_model_training
+- **Propósito**: Entrenar semanalmente el modelo de Machine Learning (`RandomForestRegressor`) para predecir retrasos.
+- **Tareas**:
+  1. Verificar que existen datos suficientes en MongoDB (`route_delay_aggregates`).
+  2. Hacer backup del modelo anterior.
+  3. Ejecutar `routing/train_delay_model.py`.
+  4. Validar el nuevo modelo comparando precisión (MAE, R²).
+  5. Notificar completación.
+- **Requisitos**: MongoDB con al menos 50 documentos en `route_delay_aggregates`.
+
+#### system_maintenance
+- **Propósito**: Mantenimiento automático del sistema para liberar espacio y optimizar rendimiento.
+- **Tareas**:
+  1. Limpiar datos raw en HDFS con más de 30 días.
+  2. Limpiar checkpoints de Spark con más de 7 días.
+  3. Rotar logs de Airflow (mantener últimos 30 días).
+  4. Identificar particiones Parquet pequeñas que podrían compactarse.
+  5. Generar reporte de espacio liberado.
+
+#### data_quality_check
+- **Propósito**: Auditoría automática de calidad de datos para detectar anomalías temprano.
+- **Tareas**:
+  1. Ejecutar `storage/mongodb/verify_data.py`.
+  2. Verificar umbrales (conteos mínimos, retrasos consistentemente en 0%).
+  3. Comparar consistencia entre HDFS y MongoDB.
+  4. Generar resumen de calidad.
+- **Alertas**: Detecta colecciones vacías, desincronizaciones y posibles fallos en cálculos.
+
+#### simulation_data_stream
+- **Propósito**: Mantener el flujo de datos vivo automáticamente para desarrollo y demos.
+- **Tareas**:
+  1. Generar datos GPS simulados cada 15 minutos usando `scripts/utils/generate_sample_data.py`.
+- **Nota**: Este DAG está pensado para entornos de desarrollo; desactívalo en producción si no es necesario.
+
+#### executive_reporting
+- **Propósito**: Generar reportes ejecutivos semanales con tendencias y métricas consolidadas.
+- **Tareas**:
+  1. Consultar tendencias semanales desde MongoDB (agregados por ruta, bottlenecks).
+  2. Generar informe HTML con tablas y métricas.
+  3. Enviar reporte por email (requiere configuración SMTP en Airflow).
+- **Salida**: Archivo HTML en `/tmp/transport_report_YYYYMMDD.html`.
+
 ---
+
+## Solución de problemas comunes
+
+### Error: "Dag id X not found in DagModel"
+**Causa**: El scheduler no está corriendo o no ha procesado los DAGs aún.
+**Solución**: 
+1. Iniciar el scheduler: `bash scripts/utils/start_airflow.sh`
+2. Esperar 10-15 segundos para que procese los DAGs
+3. Verificar: `airflow dags list`
+
+### Error: "Could not import graphviz"
+**Causa**: Falta el paquete Python `graphviz` para visualización de grafos.
+**Solución**: `pip install graphviz` (ya incluido en `requirements.txt`)
+
+### Los DAGs aparecen en `dags list` pero no se pueden ejecutar
+**Causa**: El scheduler no está corriendo o los DAGs están pausados.
+**Solución**: 
+1. Verificar que el scheduler esté corriendo: `ps aux | grep "airflow scheduler"`
+2. Activar los DAGs: `airflow dags unpause <dag_id>`
 
 ## Referencias
 

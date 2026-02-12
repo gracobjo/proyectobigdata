@@ -31,7 +31,10 @@ En esa guía se indica, paso a paso:
 |-------|--------------|---------|
 | OpenWeather | InvokeHTTP → PublishKafka_2_6 | Kafka `raw-data` |
 | FlightRadar24 | InvokeHTTP → PublishKafka_2_6 | Kafka `raw-data` |
-| Logs GPS | GetFile/TailFile → (RouteOnAttribute) → PublishKafka_2_6 + PutHDFS | Kafka `filtered-data` y HDFS `/user/hadoop/raw` |
+| Logs GPS (Simulación) | GetFile/TailFile → (RouteOnAttribute) → PublishKafka_2_6 + PutHDFS | Kafka `filtered-data` y HDFS `/user/hadoop/raw` |
+| **Sensores IoT (MQTT)** | ConsumeMQTT → JoltTransformJSON → PublishKafka_2_6 | Kafka `raw-data` |
+
+**Nota**: Para integrar sensores IoT reales, ver **docs/guides/IOT_SENSORES.md** y el flujo de ejemplo **`iot_sensors_flow.json`**.
 
 ## Configuración rápida
 
