@@ -21,6 +21,8 @@ tags:
     description: Nodos cuello de botella (MongoDB bottlenecks)
   - name: health
     description: Salud del servicio
+  - name: routes
+    description: Recomendación de rutas (sin IA o con modelo de predicción)
 
 paths:
   /health:
@@ -110,6 +112,38 @@ paths:
                 type: array
                 items: { $ref: '#/components/schemas/Bottleneck' }
 
+  /routes/recommend:
+    get:
+      tags: [routes]
+      summary: Recomendar ruta entre dos nodos
+      parameters:
+        - name: from_node
+          in: query
+          required: true
+          schema: { type: string, enum: [A, B, C, D, E] }
+          description: Nodo origen
+        - name: to_node
+          in: query
+          required: true
+          schema: { type: string, enum: [A, B, C, D, E] }
+          description: Nodo destino
+        - name: use_ml
+          in: query
+          schema: { type: boolean, default: false }
+          description: Si true, usa modelo de predicción de retrasos (Paso 3)
+        - name: at
+          in: query
+          schema: { type: string, format: date-time }
+          description: Fecha/hora para predicción (solo si use_ml=true)
+      responses:
+        '200':
+          description: Ruta recomendada (path, edges, total_weight, total_time_minutes, model_used)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RouteRecommendation' }
+        '404':
+          description: No existe camino entre los nodos
+
 components:
   schemas:
     VehicleStatus:
@@ -146,3 +180,13 @@ components:
         degree: { type: integer }
         detected_at: { type: string, format: date-time }
       description: Nodo con alto grado en la red (MongoDB bottlenecks)
+
+    RouteRecommendation:
+      type: object
+      properties:
+        path: { type: array, items: { type: string }, description: Secuencia de nodos }
+        edges: { type: array, items: { type: array, items: { type: string } }, description: Aristas (src, dst) }
+        total_weight: { type: number, description: Tiempo efectivo total (ponderado por retraso) }
+        total_time_minutes: { type: number, description: Tiempo base en minutos }
+        model_used: { type: boolean, description: Si se usó el modelo de predicción (Paso 3) }
+      description: Ruta recomendada entre origen y destino

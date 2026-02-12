@@ -25,7 +25,8 @@ Para exponer los datos (MongoDB) como API REST y publicar la documentación con 
 | Elemento | Descripción |
 |----------|-------------|
 | **Más fuentes en NiFi** | Integrar más APIs o fuentes además de OpenWeather/FlightRadar24 y logs GPS. |
-| **Modelo de ML** | Modelo de predicción de retrasos o clasificación (entrenado con datos enriquecidos); Airflow ya tiene DAG de re-entrenamiento mensual. |
+| **IA y mejora de rutas** | Cuándo introducir IA y cómo mejorar rutas (con/sin ML): **docs/guides/IA_RUTAS.md**. |
+| **Modelo de ML** | Modelo de predicción de retrasos (entrenado con delay_aggregates); Airflow ya tiene DAG de re-entrenamiento mensual. |
 | **Alertas automáticas** | Reglas (p. ej. delay_percentage > umbral) y notificaciones (email, Slack) desde los agregados en MongoDB o desde la API. |
 
 ## Seguridad y producción

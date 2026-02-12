@@ -74,3 +74,39 @@ def list_bottlenecks():
     db = get_db()
     cursor = db.bottlenecks.find().sort("degree", -1)
     return [serialize_doc(d) for d in cursor]
+
+
+@app.get("/routes/recommend")
+def route_recommend(
+    from_node: str = Query(..., description="Nodo origen (A, B, C, D, E)"),
+    to_node: str = Query(..., description="Nodo destino (A, B, C, D, E)"),
+    use_ml: bool = Query(False, description="Si True, usa modelo de predicción de retrasos (Paso 3). Requiere haber ejecutado train_delay_model.py"),
+    at: str = Query(None, description="Fecha/hora para predicción (ISO), ej. 2025-02-12T14:00. Solo aplica si use_ml=True"),
+):
+    """
+    Recomienda la ruta entre dos nodos.
+    - Sin IA (use_ml=False): retrasos actuales en MongoDB, camino mínimo por tiempo efectivo (Paso 1).
+    - Con IA (use_ml=True): modelo predice retraso por ruta y hora; devuelve la ruta con menor tiempo efectivo predicho (Paso 3).
+    """
+    try:
+        from routing.route_recommender import recommend_route, recommend_route_ml
+        from datetime import datetime
+        dt = None
+        if at:
+            try:
+                dt = datetime.fromisoformat(at.replace("Z", "+00:00"))
+            except Exception:
+                pass
+        if use_ml:
+            result = recommend_route_ml(from_node, to_node, at=dt, mongo_db=get_db())
+            if result is None:
+                result = recommend_route(from_node, to_node, mongo_db=get_db())
+                if result is not None:
+                    result["model_used"] = False
+        else:
+            result = recommend_route(from_node, to_node, mongo_db=get_db())
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    if result is None:
+        raise HTTPException(status_code=404, detail="No existe camino entre los nodos indicados")
+    return result

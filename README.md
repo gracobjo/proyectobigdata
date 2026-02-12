@@ -150,7 +150,7 @@ Ver [docs/guides/USAGE.md](docs/guides/USAGE.md) para guías de uso.
 - [NiFi: procesadores, propiedades y conexiones](docs/guides/NIFI_FLUJOS.md)
 - [Visualización del grafo (Streamlit)](docs/guides/VISUALIZACION_GRAFO.md)
 - [API Reference y consultas](docs/api/API.md) · [Swagger/OpenAPI y publicación de API](docs/api/SWAGGER_API.md)
-- [Qué más puede faltar (opcional)](docs/guides/QUE_FALTA.md)
+- [Qué más puede faltar (opcional)](docs/guides/QUE_FALTA.md) · [IA y mejora de rutas](docs/guides/IA_RUTAS.md)
 
 ## Contribución
 
