@@ -47,10 +47,10 @@ ProyectoBigData/
 │   │   ├── streaming/ # Structured Streaming
 │   │   └── graphframes/ # Análisis de grafos
 │   └── scripts/       # Scripts auxiliares
-├── storage/            # Configuraciones de almacenamiento
-│   ├── hdfs/          # Configuración HDFS
-│   ├── hive/          # Schemas y scripts Hive
-│   └── cassandra/     # Diseño lógico NoSQL (colecciones en MongoDB)
+├── storage/            # Persistencia y modelos de datos
+│   ├── hive/          # Scripts SQL de reportes (daily_report.sql)
+│   ├── mongodb/       # Consumers Kafka→MongoDB, verificación
+│   └── cassandra/     # Diseño lógico de colecciones MongoDB (ver README ahí)
 ├── orchestration/      # Fase IV: Orquestación
 │   └── airflow/
 │       ├── dags/      # DAGs de Airflow
@@ -58,18 +58,17 @@ ProyectoBigData/
 │       └── plugins/   # Plugins personalizados
 ├── config/            # Archivos de configuración
 │   └── cluster.properties  # Configuración centralizada del cluster
-├── data/              # Datos de ejemplo y maestros
-│   ├── raw/          # Datos sin procesar
-│   ├── processed/    # Datos procesados
-│   └── master/       # Datos maestros
-├── docs/              # Documentación
-│   ├── architecture/ # Diagramas de arquitectura
-│   ├── guides/       # Guías de uso
-│   └── api/          # Documentación de APIs
-├── tests/             # Tests unitarios e integración
-└── scripts/           # Scripts de utilidad y setup
-
+├── data/              # Definiciones y maestros (datos crudos en HDFS/Kafka)
+│   ├── gps_logs/     # README; .jsonl se generan con scripts/utils
+│   └── master/       # sample_master_data.sql para Hive/HDFS
+├── docs/              # Documentación (architecture, guides, api)
+├── api/               # API REST (MongoDB)
+├── routing/           # Recomendador de rutas y modelo de retrasos
+├── viz/               # Visualización del grafo
+└── scripts/           # Setup, run, stack (arranque/parada de la pila)
 ```
+
+**Hive y carpetas “vacías”:** Los datos viven en HDFS, Kafka y MongoDB. Algunas carpetas solo tienen configs o documentación. Ver **docs/guides/HIVE_Y_ESTRUCTURA_PROYECTO.md**.
 
 ## Fases del Proyecto
 
@@ -142,17 +141,13 @@ Ver [docs/guides/USAGE.md](docs/guides/USAGE.md) para guías de uso.
 
 ## Documentación
 
-- [Arquitectura del Sistema](docs/architecture/ARCHITECTURE.md)
-- [Configuración del Cluster](docs/architecture/CLUSTER_SETUP.md)
-- [Guía de Configuración](docs/guides/CONFIGURATION.md)
-- [Instalación](docs/guides/INSTALLATION.md) · [Uso](docs/guides/USAGE.md)
-- [Airflow: instalación, uso y gráfico en la UI](docs/guides/AIRFLOW.md)
-- [NiFi: procesadores, propiedades y conexiones](docs/guides/NIFI_FLUJOS.md)
-- [Fuentes de datos: cómo obtener/generar datasets para ingesta](docs/guides/FUENTES_DATOS.md)
-- [Integración IoT: conectar sensores reales (MQTT/HTTP)](docs/guides/IOT_SENSORES.md)
-- [Visualización del grafo (Streamlit)](docs/guides/VISUALIZACION_GRAFO.md)
-- [API Reference y consultas](docs/api/API.md) · [Swagger/OpenAPI y publicación de API](docs/api/SWAGGER_API.md)
-- [Qué más puede faltar (opcional)](docs/guides/QUE_FALTA.md) · [IA y mejora de rutas](docs/guides/IA_RUTAS.md)
+**Índice completo:** [docs/README.md](docs/README.md) — Ingesta, datos, storage, componentes, scripts, orquestación, guías y API.
+
+- [Arquitectura del Sistema](docs/architecture/ARCHITECTURE.md) · [Configuración del Cluster](docs/architecture/CLUSTER_SETUP.md)
+- [Guía de Configuración](docs/guides/CONFIGURATION.md) · [Instalación](docs/guides/INSTALLATION.md) · [Uso](docs/guides/USAGE.md)
+- [Airflow](docs/guides/AIRFLOW.md) · [NiFi (flujos y propiedades)](docs/guides/NIFI_FLUJOS.md) · [Fuentes de datos](docs/guides/FUENTES_DATOS.md)
+- [IoT / sensores](docs/guides/IOT_SENSORES.md) · [Visualización del grafo](docs/guides/VISUALIZACION_GRAFO.md)
+- [API Reference](docs/api/API.md) · [Swagger/OpenAPI](docs/api/SWAGGER_API.md) · [IA y rutas](docs/guides/IA_RUTAS.md)
 
 ## Contribución
 

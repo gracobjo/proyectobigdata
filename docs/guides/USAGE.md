@@ -29,7 +29,7 @@ cd $NIFI_HOME
 bin/nifi.sh start
 ```
 
-Acceder a la interfaz web: http://localhost:8443/nifi
+Acceder a la interfaz web: **https://**localhost:8443/nifi (usa https; si usas http verás una página en blanco o caracteres raros)
 
 ### 4. Iniciar MongoDB
 
@@ -65,7 +65,7 @@ Acceder a la interfaz web: http://localhost:8080
 ### Fase I: Ingesta y Selección
 
 1. **Configurar flujo de NiFi**:
-   - Acceder a NiFi UI (http://localhost:8443/nifi)
+   - Acceder a NiFi UI (https://localhost:8443/nifi)
    - Si existe template: importar desde `ingestion/nifi/transport_monitoring_template.xml`
    - Si no: montar flujos a mano según **[NIFI_FLUJOS.md](NIFI_FLUJOS.md)** (procesadores, propiedades, conexiones)
 

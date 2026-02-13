@@ -188,7 +188,7 @@ head -3 /home/hadoop/data/gps_logs/*.jsonl
 
 ### 4. Configurar NiFi
 
-1. Abre NiFi: http://localhost:8443/nifi
+1. Abre NiFi: https://localhost:8443/nifi
 2. Importa el flujo desde `ingestion/nifi/transport_monitoring_flow.json`
 3. Configura el procesador `GetFile`:
    - **Input Directory**: `/home/hadoop/data/gps_logs`

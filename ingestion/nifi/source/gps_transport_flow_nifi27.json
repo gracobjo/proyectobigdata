@@ -1,0 +1,97 @@
+{
+  "flowEncodingVersion": "1.0",
+  "flowContents": {
+    "identifier": "gps-0001-4000-8000-000000000001",
+    "name": "GPS Transport Ingest",
+    "comments": "Flujo de ingesta de logs GPS para transporte: GetFile → Kafka topic filtered-data. Proyecto BigData.",
+    "position": { "x": 0, "y": 0 },
+    "processGroups": [],
+    "remoteProcessGroups": [],
+    "processors": [
+      {
+        "identifier": "gps-0002-4000-8000-000000000002",
+        "name": "GetFile GPS Logs",
+        "comments": "Lee ficheros JSON/JSONL desde directorio local (logs GPS de transporte).",
+        "position": { "x": 100, "y": 200 },
+        "type": "org.apache.nifi.processors.standard.GetFile",
+        "bundle": { "group": "org.apache.nifi", "artifact": "nifi-standard-nar", "version": "2.7.2" },
+        "properties": {
+          "Input Directory": "/home/hadoop/data/gps_logs",
+          "File Filter": ".*\\.jsonl?",
+          "Keep Source File": "false",
+          "Polling Interval": "5 sec"
+        },
+        "schedulingPeriod": "5 sec",
+        "schedulingStrategy": "TIMER_DRIVEN",
+        "executionNode": "ALL",
+        "penaltyDuration": "30 sec",
+        "yieldDuration": "1 sec",
+        "concurrentlySchedulableTaskCount": 1,
+        "autoTerminatedRelationships": ["failure"],
+        "scheduledState": "DISABLED",
+        "componentType": "PROCESSOR",
+        "groupIdentifier": "gps-0001-4000-8000-000000000001"
+      },
+      {
+        "identifier": "gps-0003-4000-8000-000000000003",
+        "name": "PublishKafka filtered-data",
+        "comments": "Publica logs GPS en Kafka topic filtered-data para downstream (Spark, etc.).",
+        "position": { "x": 420, "y": 200 },
+        "type": "org.apache.nifi.processors.kafka.pubsub.PublishKafka_2_6",
+        "bundle": { "group": "org.apache.nifi", "artifact": "nifi-kafka-nar", "version": "2.7.2" },
+        "properties": {
+          "Kafka Brokers": "localhost:9092",
+          "Topic Name": "filtered-data",
+          "Delivery Guarantee": "best effort"
+        },
+        "schedulingPeriod": "0 sec",
+        "schedulingStrategy": "TIMER_DRIVEN",
+        "executionNode": "ALL",
+        "penaltyDuration": "30 sec",
+        "yieldDuration": "1 sec",
+        "concurrentlySchedulableTaskCount": 1,
+        "autoTerminatedRelationships": [],
+        "scheduledState": "DISABLED",
+        "componentType": "PROCESSOR",
+        "groupIdentifier": "gps-0001-4000-8000-000000000001"
+      }
+    ],
+    "inputPorts": [],
+    "outputPorts": [],
+    "connections": [
+      {
+        "identifier": "gps-conn-001-getfile-to-kafka",
+        "name": "",
+        "source": {
+          "id": "gps-0002-4000-8000-000000000002",
+          "type": "PROCESSOR",
+          "groupId": "gps-0001-4000-8000-000000000001",
+          "name": "GetFile GPS Logs"
+        },
+        "destination": {
+          "id": "gps-0003-4000-8000-000000000003",
+          "type": "PROCESSOR",
+          "groupId": "gps-0001-4000-8000-000000000001",
+          "name": "PublishKafka filtered-data"
+        },
+        "selectedRelationships": ["success"],
+        "backPressureObjectThreshold": 10000,
+        "backPressureDataSizeThreshold": "1 GB",
+        "flowFileExpiration": "0 sec",
+        "componentType": "CONNECTION",
+        "groupIdentifier": "gps-0001-4000-8000-000000000001"
+      }
+    ],
+    "labels": [],
+    "funnels": [],
+    "variables": {},
+    "defaultFlowFileExpiration": "0 sec",
+    "defaultBackPressureObjectThreshold": 10000,
+    "defaultBackPressureDataSizeThreshold": "1 GB",
+    "flowFileConcurrency": "UNBOUNDED",
+    "flowFileOutboundPolicy": "STREAM_WHEN_AVAILABLE",
+    "componentType": "PROCESS_GROUP"
+  },
+  "externalControllerServices": {},
+  "parameterContexts": {}
+}

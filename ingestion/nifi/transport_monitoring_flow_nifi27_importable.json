@@ -1,0 +1,528 @@
+{
+  "flowContents": {
+    "identifier": "a1b2c3d4-0001-4000-8000-000000000001",
+    "name": "Transport Monitoring",
+    "comments": "Flujos de ingesta: OpenWeather, FlightRadar24, Logs GPS → Kafka. Compatible NiFi 2.7.x. Añadir PutHDFS manualmente si se necesita HDFS.",
+    "position": {
+      "x": 0,
+      "y": 0
+    },
+    "processGroups": [],
+    "remoteProcessGroups": [],
+    "processors": [
+      {
+        "identifier": "b1b2c3d4-0002-4000-8000-000000000002",
+        "name": "OpenWeather InvokeHTTP",
+        "comments": "API OpenWeather cada 5 min → raw-data",
+        "position": {
+          "x": 100,
+          "y": 50
+        },
+        "type": "org.apache.nifi.processors.standard.InvokeHTTP",
+        "bundle": {
+          "group": "org.apache.nifi",
+          "artifact": "nifi-standard-nar",
+          "version": "2.7.2"
+        },
+        "properties": {
+          "HTTP Method": "GET",
+          "Remote URL": "https://api.openweathermap.org/data/2.5/weather?q=Madrid&appid=REPLACE_WITH_API_KEY&units=metric",
+          "Connection Timeout": "10 secs",
+          "Read Timeout": "10 secs"
+        },
+        "schedulingPeriod": "5 min",
+        "schedulingStrategy": "TIMER_DRIVEN",
+        "executionNode": "ALL",
+        "penaltyDuration": "30 sec",
+        "yieldDuration": "1 sec",
+        "concurrentlySchedulableTaskCount": 1,
+        "autoTerminatedRelationships": [
+          "failure",
+          "retry",
+          "no retry"
+        ],
+        "scheduledState": "DISABLED",
+        "componentType": "PROCESSOR",
+        "groupIdentifier": "a1b2c3d4-0001-4000-8000-000000000001",
+        "instanceIdentifier": "a5a71b53-2a7a-4110-9145-b54974a26447",
+        "propertyDescriptors": {
+          "HTTP Method": {
+            "name": "HTTP Method",
+            "displayName": "HTTP Method",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Remote URL": {
+            "name": "Remote URL",
+            "displayName": "Remote URL",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Connection Timeout": {
+            "name": "Connection Timeout",
+            "displayName": "Connection Timeout",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Read Timeout": {
+            "name": "Read Timeout",
+            "displayName": "Read Timeout",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          }
+        },
+        "style": {},
+        "bulletinLevel": "WARN",
+        "runDurationMillis": 0,
+        "retryCount": 10,
+        "retriedRelationships": [],
+        "backoffMechanism": "PENALIZE_FLOWFILE",
+        "maxBackoffPeriod": "10 mins"
+      },
+      {
+        "identifier": "c1b2c3d4-0003-4000-8000-000000000003",
+        "name": "PublishKafka raw-data (OpenWeather)",
+        "comments": "",
+        "position": {
+          "x": 400,
+          "y": 50
+        },
+        "type": "org.apache.nifi.processors.kafka.pubsub.PublishKafka_2_6",
+        "bundle": {
+          "group": "org.apache.nifi",
+          "artifact": "nifi-kafka-nar",
+          "version": "2.7.2"
+        },
+        "properties": {
+          "Kafka Brokers": "localhost:9092",
+          "Topic Name": "raw-data",
+          "Delivery Guarantee": "best effort"
+        },
+        "schedulingPeriod": "0 sec",
+        "schedulingStrategy": "TIMER_DRIVEN",
+        "executionNode": "ALL",
+        "penaltyDuration": "30 sec",
+        "yieldDuration": "1 sec",
+        "concurrentlySchedulableTaskCount": 1,
+        "autoTerminatedRelationships": [],
+        "scheduledState": "DISABLED",
+        "componentType": "PROCESSOR",
+        "groupIdentifier": "a1b2c3d4-0001-4000-8000-000000000001",
+        "instanceIdentifier": "5881241c-ee34-4336-8451-941d40e812fc",
+        "propertyDescriptors": {
+          "Kafka Brokers": {
+            "name": "Kafka Brokers",
+            "displayName": "Kafka Brokers",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Topic Name": {
+            "name": "Topic Name",
+            "displayName": "Topic Name",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Delivery Guarantee": {
+            "name": "Delivery Guarantee",
+            "displayName": "Delivery Guarantee",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          }
+        },
+        "style": {},
+        "bulletinLevel": "WARN",
+        "runDurationMillis": 0,
+        "retryCount": 10,
+        "retriedRelationships": [],
+        "backoffMechanism": "PENALIZE_FLOWFILE",
+        "maxBackoffPeriod": "10 mins"
+      },
+      {
+        "identifier": "d1b2c3d4-0004-4000-8000-000000000004",
+        "name": "FlightRadar24 InvokeHTTP",
+        "comments": "API FlightRadar24 o mock cada 1 min → raw-data",
+        "position": {
+          "x": 100,
+          "y": 220
+        },
+        "type": "org.apache.nifi.processors.standard.InvokeHTTP",
+        "bundle": {
+          "group": "org.apache.nifi",
+          "artifact": "nifi-standard-nar",
+          "version": "2.7.2"
+        },
+        "properties": {
+          "HTTP Method": "GET",
+          "Remote URL": "https://httpbin.org/get"
+        },
+        "schedulingPeriod": "1 min",
+        "schedulingStrategy": "TIMER_DRIVEN",
+        "executionNode": "ALL",
+        "penaltyDuration": "30 sec",
+        "yieldDuration": "1 sec",
+        "concurrentlySchedulableTaskCount": 1,
+        "autoTerminatedRelationships": [
+          "failure",
+          "retry",
+          "no retry"
+        ],
+        "scheduledState": "DISABLED",
+        "componentType": "PROCESSOR",
+        "groupIdentifier": "a1b2c3d4-0001-4000-8000-000000000001",
+        "instanceIdentifier": "c1d0bd48-ef3c-48d8-bedc-1ee5739f7b46",
+        "propertyDescriptors": {
+          "HTTP Method": {
+            "name": "HTTP Method",
+            "displayName": "HTTP Method",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Remote URL": {
+            "name": "Remote URL",
+            "displayName": "Remote URL",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          }
+        },
+        "style": {},
+        "bulletinLevel": "WARN",
+        "runDurationMillis": 0,
+        "retryCount": 10,
+        "retriedRelationships": [],
+        "backoffMechanism": "PENALIZE_FLOWFILE",
+        "maxBackoffPeriod": "10 mins"
+      },
+      {
+        "identifier": "e1b2c3d4-0005-4000-8000-000000000005",
+        "name": "PublishKafka raw-data (FlightRadar24)",
+        "comments": "",
+        "position": {
+          "x": 400,
+          "y": 220
+        },
+        "type": "org.apache.nifi.processors.kafka.pubsub.PublishKafka_2_6",
+        "bundle": {
+          "group": "org.apache.nifi",
+          "artifact": "nifi-kafka-nar",
+          "version": "2.7.2"
+        },
+        "properties": {
+          "Kafka Brokers": "localhost:9092",
+          "Topic Name": "raw-data",
+          "Delivery Guarantee": "best effort"
+        },
+        "schedulingPeriod": "0 sec",
+        "schedulingStrategy": "TIMER_DRIVEN",
+        "executionNode": "ALL",
+        "penaltyDuration": "30 sec",
+        "yieldDuration": "1 sec",
+        "concurrentlySchedulableTaskCount": 1,
+        "autoTerminatedRelationships": [],
+        "scheduledState": "DISABLED",
+        "componentType": "PROCESSOR",
+        "groupIdentifier": "a1b2c3d4-0001-4000-8000-000000000001",
+        "instanceIdentifier": "9840bd6d-b9a5-427d-9ef4-cb991917659f",
+        "propertyDescriptors": {
+          "Kafka Brokers": {
+            "name": "Kafka Brokers",
+            "displayName": "Kafka Brokers",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Topic Name": {
+            "name": "Topic Name",
+            "displayName": "Topic Name",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Delivery Guarantee": {
+            "name": "Delivery Guarantee",
+            "displayName": "Delivery Guarantee",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          }
+        },
+        "style": {},
+        "bulletinLevel": "WARN",
+        "runDurationMillis": 0,
+        "retryCount": 10,
+        "retriedRelationships": [],
+        "backoffMechanism": "PENALIZE_FLOWFILE",
+        "maxBackoffPeriod": "10 mins"
+      },
+      {
+        "identifier": "f1b2c3d4-0006-4000-8000-000000000006",
+        "name": "GetFile GPS Logs",
+        "comments": "Lee JSON desde directorio local → Kafka filtered-data",
+        "position": {
+          "x": 100,
+          "y": 400
+        },
+        "type": "org.apache.nifi.processors.standard.GetFile",
+        "bundle": {
+          "group": "org.apache.nifi",
+          "artifact": "nifi-standard-nar",
+          "version": "2.7.2"
+        },
+        "properties": {
+          "Input Directory": "/home/hadoop/data/gps_logs",
+          "File Filter": ".*\\.jsonl?",
+          "Keep Source File": "false",
+          "Polling Interval": "5 sec"
+        },
+        "schedulingPeriod": "5 sec",
+        "schedulingStrategy": "TIMER_DRIVEN",
+        "executionNode": "ALL",
+        "penaltyDuration": "30 sec",
+        "yieldDuration": "1 sec",
+        "concurrentlySchedulableTaskCount": 1,
+        "autoTerminatedRelationships": [],
+        "scheduledState": "DISABLED",
+        "componentType": "PROCESSOR",
+        "groupIdentifier": "a1b2c3d4-0001-4000-8000-000000000001",
+        "instanceIdentifier": "ad7323d3-18a6-4476-b8c3-5c8ba45fcd3d",
+        "propertyDescriptors": {
+          "Input Directory": {
+            "name": "Input Directory",
+            "displayName": "Input Directory",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "File Filter": {
+            "name": "File Filter",
+            "displayName": "File Filter",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Keep Source File": {
+            "name": "Keep Source File",
+            "displayName": "Keep Source File",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Polling Interval": {
+            "name": "Polling Interval",
+            "displayName": "Polling Interval",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          }
+        },
+        "style": {},
+        "bulletinLevel": "WARN",
+        "runDurationMillis": 0,
+        "retryCount": 10,
+        "retriedRelationships": [],
+        "backoffMechanism": "PENALIZE_FLOWFILE",
+        "maxBackoffPeriod": "10 mins"
+      },
+      {
+        "identifier": "a2b2c3d4-0007-4000-8000-000000000007",
+        "name": "PublishKafka filtered-data",
+        "comments": "",
+        "position": {
+          "x": 420,
+          "y": 400
+        },
+        "type": "org.apache.nifi.processors.kafka.pubsub.PublishKafka_2_6",
+        "bundle": {
+          "group": "org.apache.nifi",
+          "artifact": "nifi-kafka-nar",
+          "version": "2.7.2"
+        },
+        "properties": {
+          "Kafka Brokers": "localhost:9092",
+          "Topic Name": "filtered-data",
+          "Delivery Guarantee": "best effort"
+        },
+        "schedulingPeriod": "0 sec",
+        "schedulingStrategy": "TIMER_DRIVEN",
+        "executionNode": "ALL",
+        "penaltyDuration": "30 sec",
+        "yieldDuration": "1 sec",
+        "concurrentlySchedulableTaskCount": 1,
+        "autoTerminatedRelationships": [],
+        "scheduledState": "DISABLED",
+        "componentType": "PROCESSOR",
+        "groupIdentifier": "a1b2c3d4-0001-4000-8000-000000000001",
+        "instanceIdentifier": "9febed25-a488-4ffe-9ab6-330f43ba6605",
+        "propertyDescriptors": {
+          "Kafka Brokers": {
+            "name": "Kafka Brokers",
+            "displayName": "Kafka Brokers",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Topic Name": {
+            "name": "Topic Name",
+            "displayName": "Topic Name",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          },
+          "Delivery Guarantee": {
+            "name": "Delivery Guarantee",
+            "displayName": "Delivery Guarantee",
+            "identifiesControllerService": false,
+            "sensitive": false,
+            "dynamic": false
+          }
+        },
+        "style": {},
+        "bulletinLevel": "WARN",
+        "runDurationMillis": 0,
+        "retryCount": 10,
+        "retriedRelationships": [],
+        "backoffMechanism": "PENALIZE_FLOWFILE",
+        "maxBackoffPeriod": "10 mins"
+      }
+    ],
+    "inputPorts": [],
+    "outputPorts": [],
+    "connections": [
+      {
+        "identifier": "conn-1-openweather-to-kafka",
+        "name": "",
+        "source": {
+          "id": "b1b2c3d4-0002-4000-8000-000000000002",
+          "type": "PROCESSOR",
+          "groupId": "a1b2c3d4-0001-4000-8000-000000000001",
+          "name": "OpenWeather InvokeHTTP",
+          "instanceIdentifier": "a5a71b53-2a7a-4110-9145-b54974a26447",
+          "comments": ""
+        },
+        "destination": {
+          "id": "c1b2c3d4-0003-4000-8000-000000000003",
+          "type": "PROCESSOR",
+          "groupId": "a1b2c3d4-0001-4000-8000-000000000001",
+          "name": "PublishKafka raw-data (OpenWeather)",
+          "instanceIdentifier": "5881241c-ee34-4336-8451-941d40e812fc",
+          "comments": ""
+        },
+        "selectedRelationships": [
+          "success"
+        ],
+        "backPressureObjectThreshold": 10000,
+        "backPressureDataSizeThreshold": "1 GB",
+        "flowFileExpiration": "0 sec",
+        "componentType": "CONNECTION",
+        "groupIdentifier": "a1b2c3d4-0001-4000-8000-000000000001",
+        "instanceIdentifier": "fe38c659-6cb9-4db6-9313-0a348eaa632e",
+        "labelIndex": 0,
+        "zIndex": 1,
+        "prioritizers": [],
+        "bends": [],
+        "loadBalanceStrategy": "DO_NOT_LOAD_BALANCE",
+        "partitioningAttribute": "",
+        "loadBalanceCompression": "DO_NOT_COMPRESS"
+      },
+      {
+        "identifier": "conn-2-flightradar-to-kafka",
+        "name": "",
+        "source": {
+          "id": "d1b2c3d4-0004-4000-8000-000000000004",
+          "type": "PROCESSOR",
+          "groupId": "a1b2c3d4-0001-4000-8000-000000000001",
+          "name": "FlightRadar24 InvokeHTTP",
+          "instanceIdentifier": "c1d0bd48-ef3c-48d8-bedc-1ee5739f7b46",
+          "comments": ""
+        },
+        "destination": {
+          "id": "e1b2c3d4-0005-4000-8000-000000000005",
+          "type": "PROCESSOR",
+          "groupId": "a1b2c3d4-0001-4000-8000-000000000001",
+          "name": "PublishKafka raw-data (FlightRadar24)",
+          "instanceIdentifier": "9840bd6d-b9a5-427d-9ef4-cb991917659f",
+          "comments": ""
+        },
+        "selectedRelationships": [
+          "success"
+        ],
+        "backPressureObjectThreshold": 10000,
+        "backPressureDataSizeThreshold": "1 GB",
+        "flowFileExpiration": "0 sec",
+        "componentType": "CONNECTION",
+        "groupIdentifier": "a1b2c3d4-0001-4000-8000-000000000001",
+        "instanceIdentifier": "2b075506-0b7b-4095-931b-14933e8f21d3",
+        "labelIndex": 0,
+        "zIndex": 2,
+        "prioritizers": [],
+        "bends": [],
+        "loadBalanceStrategy": "DO_NOT_LOAD_BALANCE",
+        "partitioningAttribute": "",
+        "loadBalanceCompression": "DO_NOT_COMPRESS"
+      },
+      {
+        "identifier": "conn-3-getfile-to-kafka",
+        "name": "",
+        "source": {
+          "id": "f1b2c3d4-0006-4000-8000-000000000006",
+          "type": "PROCESSOR",
+          "groupId": "a1b2c3d4-0001-4000-8000-000000000001",
+          "name": "GetFile GPS Logs",
+          "instanceIdentifier": "ad7323d3-18a6-4476-b8c3-5c8ba45fcd3d",
+          "comments": ""
+        },
+        "destination": {
+          "id": "a2b2c3d4-0007-4000-8000-000000000007",
+          "type": "PROCESSOR",
+          "groupId": "a1b2c3d4-0001-4000-8000-000000000001",
+          "name": "PublishKafka filtered-data",
+          "instanceIdentifier": "9febed25-a488-4ffe-9ab6-330f43ba6605",
+          "comments": ""
+        },
+        "selectedRelationships": [
+          "success"
+        ],
+        "backPressureObjectThreshold": 10000,
+        "backPressureDataSizeThreshold": "1 GB",
+        "flowFileExpiration": "0 sec",
+        "componentType": "CONNECTION",
+        "groupIdentifier": "a1b2c3d4-0001-4000-8000-000000000001",
+        "instanceIdentifier": "787e59be-1466-49c0-9227-0d45ad9493b6",
+        "labelIndex": 0,
+        "zIndex": 3,
+        "prioritizers": [],
+        "bends": [],
+        "loadBalanceStrategy": "DO_NOT_LOAD_BALANCE",
+        "partitioningAttribute": "",
+        "loadBalanceCompression": "DO_NOT_COMPRESS"
+      }
+    ],
+    "labels": [],
+    "funnels": [],
+    "variables": {},
+    "defaultFlowFileExpiration": "0 sec",
+    "defaultBackPressureObjectThreshold": 10000,
+    "defaultBackPressureDataSizeThreshold": "1 GB",
+    "flowFileConcurrency": "UNBOUNDED",
+    "flowFileOutboundPolicy": "STREAM_WHEN_AVAILABLE",
+    "componentType": "PROCESS_GROUP",
+    "instanceIdentifier": "d455d919-5856-45b8-8f20-4f6f9c56cb0b",
+    "scheduledState": "ENABLED",
+    "executionEngine": "INHERITED",
+    "maxConcurrentTasks": 1,
+    "statelessFlowTimeout": "1 min"
+  },
+  "externalControllerServices": {},
+  "parameterContexts": {},
+  "parameterProviders": {},
+  "latest": false,
+  "flowEncodingVersion": "1.0"
+}
