@@ -4,11 +4,13 @@ Lee datos de MongoDB (transport_db). Swagger UI en http://localhost:5000/docs
 
 Ejecutar: uvicorn api.main:app --host 0.0.0.0 --port 5000
 """
+import os
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
-MONGO_URI = "mongodb://127.0.0.1:27017/"
-DB_NAME = "transport_db"
+
+MONGO_URI = os.environ.get("MONGO_URI", "mongodb://127.0.0.1:27017/")
+DB_NAME = os.environ.get("DB_NAME", "transport_db")
 
 app = FastAPI(
     title="Transport Monitoring API",

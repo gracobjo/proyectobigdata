@@ -1,6 +1,7 @@
 # Archivos de configuración local
 *.local
 *.env
+!docker/hadoop.env
 
 # Logs
 *.log

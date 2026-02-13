@@ -1,0 +1,17 @@
+{
+  "buildCommand": "pip install -r requirements-vercel.txt",
+  "installCommand": "pip install -r requirements-vercel.txt",
+  "framework": null,
+  "excludeFiles": [
+    "docker/**",
+    "processing/**",
+    "ingestion/**",
+    "orchestration/**",
+    "scripts/**",
+    "storage/**",
+    "viz/**",
+    "config/**",
+    "data/**",
+    "*.pdf"
+  ]
+}

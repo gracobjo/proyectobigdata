@@ -34,6 +34,11 @@
 - [scripts/stack-arranque-pila.md](scripts/stack-arranque-pila.md) — Arrancar/parar la pila (HDFS, YARN, Kafka, NiFi, Airflow)
 - [scripts/run-pipeline.md](scripts/run-pipeline.md) — Orden de ejecución del pipeline (run/)
 
+## Docker y despliegue (pruebas)
+
+- [docker/README.md](../docker/README.md) — Docker: stack completo, perfil ligero (Railway), **Vercel** (solo API), S3 y AWS
+- [despliegue-colab-jupyter.md](despliegue-colab-jupyter.md) — **Colab, Jupyter, Binder, Kaggle**: alojar y probar el proyecto (notebooks, API con MongoDB Atlas)
+
 ## Orquestación
 
 - [orchestration/airflow-dags.md](orchestration/airflow-dags.md) — DAGs de Airflow

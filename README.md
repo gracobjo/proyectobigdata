@@ -113,6 +113,9 @@ ProyectoBigData/
 
 👉 **[Guía de Inicio Rápido](docs/GETTING_STARTED.md)** - Paso a paso desde cero
 
+**Probar sin instalar (Colab, Jupyter, Binder)**  
+Notebook listo para ejecutar en [Google Colab](https://colab.research.google.com/github/gracobjo/proyectobigdata/blob/main/notebooks/ProyectoBigData_Colab.ipynb) o [Binder](https://mybinder.org/v2/gh/gracobjo/proyectobigdata/HEAD?labpath=notebooks%2FProyectoBigData_Colab.ipynb): recomendador de rutas y opcional API con MongoDB Atlas. Ver [docs/despliegue-colab-jupyter.md](docs/despliegue-colab-jupyter.md).
+
 ## Configuración Inicial del Cluster
 
 1. **Configurar /etc/hosts** en ambos nodos:
